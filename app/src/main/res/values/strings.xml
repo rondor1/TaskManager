@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Task Manager</string>
+    <!-- Main Activity strings-->
+    <string name="rightButtonText">rightButtonText</string>
+    <string name="leftButtonText">leftButtonText</string>
+    <string name="newTask">Add new task</string>
+    <string name="statistics">Statistics</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <!-- Task activity strings -->
+    <!--Days of week-->
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="dayAfterTomorrow">Day after tomorrow</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <!--Other strings used in task-->
+    <string name="taskName">Task name</string>
+    <string name="setDate">Set date</string>
+    <string name="setTime">Set time</string>
+    <string name="timeError">Time invalid! Set again!</string>
+    <string name="description">Description</string>
+    <string name="Checkbox">Set reminder 15 minutes before</string>
+    <string name="setPriority">Set task priority:</string>
+    <string name="high">High</string>
+    <string name="medium">Medium</string>
+    <string name="low">Low</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="attention">Few tasks need your attention</string>
+    <!-- Task activity -->
+    <string name="addedToast">Task added successfully.</string>
+    <string name="cancelToast">Adding new task aborted.</string>
+    <!-- Statistics activity -->
+    <string name="backToMainScreen">Back</string>
+    <string name="highRatio">High priority</string>
+    <string name="mediumRatio">Medium priority</string>
+    <string name="lowRatio">Low priority</string>
+</resources>

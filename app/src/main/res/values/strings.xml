@@ -8,6 +8,8 @@
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <!-- Task activity strings -->
+    <string name="typeOfTask">typeOfTask</string>
+    <string name="taskPosition">taskPosition</string>
     <!--Days of week-->
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
@@ -33,9 +35,12 @@
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
     <string name="attention">Few tasks need your attention</string>
+    <string name="returnButtonCode">returnCode</string>
     <!-- Task activity -->
     <string name="addedToast">Task added successfully.</string>
     <string name="cancelToast">Adding new task aborted.</string>
+    <string name="passedTask">CreatedTask</string>
+    <string name="passedBundle">TaskBundle</string>
     <!-- Statistics activity -->
     <string name="backToMainScreen">Back</string>
     <string name="highRatio">High priority</string>

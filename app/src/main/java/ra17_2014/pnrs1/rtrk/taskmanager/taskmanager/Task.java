@@ -7,26 +7,60 @@ import java.io.Serializable;
  */
 
 public class Task  implements Serializable{
-    private String mTaskName;
-    private String mTaskDescription;
-    private String mTaskDate;
-    private String mTaskTime;
-    private int mTaskReminder;
-    private String mTaskPriorityText;
-    private int mTaskPriorityColor;
-    private int mTaskDone;
+    public String mTaskName;
+    public String mTaskDescription;
+    public String mTaskDate;
+    public String mTaskTime;
+    public int mTaskID;
+    public int mTaskReminder;
+    public int mTaskPriorityColor;
+    public int mTaskDone;
 
     public Task(String name, String description, String date, String time, int reminder,
-                String priorityText, int priorityColor, int taskDone)
+                int priorityColor)
     {
+        mTaskID = 0;
         mTaskName = name;
         mTaskDescription = description;
         mTaskDate = date;
         mTaskTime = time;
         mTaskReminder = reminder;
-        mTaskPriorityText = priorityText;
         mTaskPriorityColor = priorityColor;
-        mTaskDone = taskDone;
+        mTaskDone = 0;
+    }
+
+    public void setTaskName(String mTaskName) {
+        this.mTaskName = mTaskName;
+    }
+
+    public void setTaskReminder(int mTaskReminder) {
+        this.mTaskReminder = mTaskReminder;
+    }
+
+    public void setTaskPriorityColor(int mTaskPriorityColor) {
+        this.mTaskPriorityColor = mTaskPriorityColor;
+    }
+
+    public void setTaskDescription(String mTaskDescription) {
+        this.mTaskDescription = mTaskDescription;
+    }
+
+    public void setTaskDate(String mTaskDate) {
+        this.mTaskDate = mTaskDate;
+    }
+
+    public void setTaskTime(String mTaskTime) {
+        this.mTaskTime = mTaskTime;
+    }
+
+    public int getTaskID()
+    {
+        return mTaskID;
+    }
+
+    public void setTaskID(int id)
+    {
+        mTaskID = id;
     }
 
     public String getTaskName()
@@ -54,15 +88,19 @@ public class Task  implements Serializable{
         return mTaskReminder;
     }
 
+
     public int isTaskDone()
     {
         return mTaskDone;
     }
 
-
-    public String getTaskPriorityText()
+    public void setTaskDone(int done)
     {
-        return mTaskPriorityText;
+        mTaskDone = done;
     }
 
+    public int getTaskPriorityColor()
+    {
+        return mTaskPriorityColor;
+    }
 }

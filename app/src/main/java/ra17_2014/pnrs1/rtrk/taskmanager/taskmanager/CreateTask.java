@@ -2,7 +2,6 @@ package ra17_2014.pnrs1.rtrk.taskmanager.taskmanager;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
@@ -21,11 +21,17 @@ import java.sql.Time;
 import java.util.Calendar;
 
 
-public class CreateTask extends AppCompatActivity implements View.OnClickListener{
+public class CreateTask extends AppCompatActivity {
 
     /*Calendar*/
     protected Calendar mCalendar;
     protected Calendar mCurrentDate;
+
+    /*Intent*/
+    final Intent mMainIntent = new Intent();
+
+    /*Database*/
+    DatabaseHelper mDatabaseHelper;
 
     /*Task priority color*/
     private boolean mSetRed = false;
@@ -33,14 +39,13 @@ public class CreateTask extends AppCompatActivity implements View.OnClickListene
     private boolean mSetGreen = false;
 
     /*Strings*/
-    protected CharSequence mSuccessfulText;
-    protected CharSequence mCancelText;;
+    protected CharSequence mDateDisplay;
     private String mLeftButtonName;
     private String mRightButtonName;
+    private String mTaskDescriptionString;
     private String mTaskNameString;
     private String mDateString;
     private String mTimeString;
-    private CharSequence mDateDisplay;
 
     /*Task created flags*/
     protected boolean mPriorityButton;
@@ -48,6 +53,12 @@ public class CreateTask extends AppCompatActivity implements View.OnClickListene
     protected boolean mTimeSet;
     protected boolean mDateSet;
 
+    Task mTask;
+
+
+    /*Int flags and fields*/
+    protected int mReminder = 0;
+    protected int mPriorityColorSet = 0 ;
     /*Date picker*/
     protected DatePickerDialog.OnDateSetListener mDate;
     protected DatePickerDialog mDatePicker;
@@ -69,6 +80,8 @@ public class CreateTask extends AppCompatActivity implements View.OnClickListene
     Button mSetDate;
     Button mSetTime;
 
+    /*Checkbox*/
+    CheckBox mCheckBox;
     protected TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after)
@@ -86,6 +99,7 @@ public class CreateTask extends AppCompatActivity implements View.OnClickListene
         public void afterTextChanged(Editable s)
         {
             mTaskNameString = mTaskName.getText().toString();
+            mTaskDescriptionString = mTaskDescription.getText().toString();
             checkFieldsForEmpty();
 
         }
@@ -96,6 +110,12 @@ public class CreateTask extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_task);
 
+        /*Intent*/
+        Log.i("Robert", "Create task started");
+
+        /*Database*/
+        mDatabaseHelper = new DatabaseHelper(this);
+
         /*Instances of buttons*/
         mLeftButton = (Button) findViewById(R.id.leftButton);
         mRightButton = (Button) findViewById(R.id.rightButton);
@@ -105,14 +125,8 @@ public class CreateTask extends AppCompatActivity implements View.OnClickListene
         mSetDate = (Button) findViewById(R.id.setDate);
         mSetTime = (Button) findViewById(R.id.setTime);
 
-        /*Connect them with context*/
-        mLeftButton.setOnClickListener(this);
-        mRightButton.setOnClickListener(this);
-        mPriorityRed.setOnClickListener(this);
-        mPriorityYellow.setOnClickListener(this);
-        mPriorityGreen.setOnClickListener(this);
-        mSetDate.setOnClickListener(this);
-        mSetTime.setOnClickListener(this);
+        mLeftButton.setText(getIntent().getStringExtra(getString(R.string.leftButtonText)));
+        mRightButton.setText(getIntent().getStringExtra(getString(R.string.rightButtonText)));
 
         /*Instances of EditText*/
         mTaskName = (EditText) findViewById(R.id.taskName);
@@ -127,6 +141,8 @@ public class CreateTask extends AppCompatActivity implements View.OnClickListene
         mTaskDescription.addTextChangedListener(mTextWatcher);
         checkFieldsForEmpty();
 
+        /*Checkbox*/
+        mCheckBox = (CheckBox) findViewById(R.id.checkBox);
 
          /*Calendar*/
         mCalendar = Calendar.getInstance();
@@ -265,65 +281,145 @@ public class CreateTask extends AppCompatActivity implements View.OnClickListene
                 mTimeSet = true;
             }
         });
-    }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId())
+        View.OnClickListener mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mMainIntent = new Intent();
+                switch(v.getId())
+                {
+                    case R.id.leftButton :
+                        Bundle mBundle = new Bundle();
+                        if(getIntent().getExtras().getInt(getString(R.string.typeOfTask)) == MainActivity.ADD)
+                        {
+                            if(mCheckBox.isChecked())
+                                mReminder = android.R.drawable.ic_popup_reminder;
+                            Task mTask = new Task(mTaskNameString, mTaskDescriptionString, mDateString
+                                    ,mTimeString, mReminder, mPriorityColorSet);
+                            mBundle.putSerializable(getString(R.string.passedTask), mTask);
+                            mMainIntent.putExtra(getString(R.string.passedBundle), mBundle);
+                            setResult(RESULT_OK, mMainIntent);
+                        }
+                        else if(getIntent().getExtras().getInt(getString(R.string.typeOfTask)) == MainActivity.EDIT)
+                        {
+                            if(mCheckBox.isChecked())
+                                mReminder = android.R.drawable.ic_popup_reminder;
+                            mTask.setTaskName(mTaskNameString);
+                            mTask.setTaskDescription(mTaskDescriptionString);
+                            mTask.setTaskTime(mTimeString);
+                            mTask.setTaskDate(mDateString);
+                            mTask.setTaskPriorityColor(mPriorityColorSet);
+                            mTask.setTaskReminder(mReminder);
+                            mBundle.putSerializable(getString(R.string.passedTask), mTask);
+                            mMainIntent.putExtra(getString(R.string.passedBundle), mBundle);
+                            setResult(RESULT_FIRST_USER, mMainIntent);
+                        }
+                        finish();
+                        break;
+
+                    case R.id.rightButton :
+                        mMainIntent.putExtra(getString(R.string.taskPosition), getIntent().getExtras()
+                                .getInt(getString(R.string.taskPosition)));
+                        setResult(RESULT_CANCELED, mMainIntent);
+                        finish();
+                        break;
+
+                    case R.id.setDate :
+                        mDatePicker.getDatePicker().setMinDate(Calendar.getInstance().getTimeInMillis());
+                        mDatePicker.show();
+                        break;
+
+                    case R.id.setTime :
+                        mTimePicker.show();
+                        break;
+
+                    case R.id.Red :
+                        mSetRed = true;
+                        mPriorityRed.setEnabled(false);
+                        mPriorityButton = true;
+                        mPriorityColorSet = R.drawable.red;
+                        if(mEditTextFilled && mTimeSet && mDateSet)
+                        {
+                            mLeftButton.setEnabled(true);
+                        }
+                        mPriorityYellow.setEnabled(true);
+                        mPriorityGreen.setEnabled(true);
+                        break;
+
+                    case R.id.Yellow :
+                        mSetYellow = true;
+                        mPriorityYellow.setEnabled(false);
+                        mPriorityButton = true;
+                        mPriorityColorSet = R.drawable.yellow;
+                        if(mEditTextFilled && mDateSet && mTimeSet)
+                        {
+                            mLeftButton.setEnabled(true);
+                        }
+                        mPriorityRed.setEnabled(true);
+                        mPriorityGreen.setEnabled(true);
+                        break;
+
+                    case R.id.Green :
+                        mSetGreen = true;
+                        mPriorityGreen.setEnabled(false);
+                        mPriorityButton = true;
+                        mPriorityColorSet = R.drawable.green;
+                        if(mEditTextFilled && mDateSet && mTimeSet)
+                        {
+                            mLeftButton.setEnabled(true);
+                        }
+                        mPriorityRed.setEnabled(true);
+                        mPriorityYellow.setEnabled(true);
+                        break;
+
+                }
+            }
+        };
+
+
+        if(getIntent().getExtras().getInt(getString(R.string.typeOfTask)) == MainActivity.ADD)
         {
-            case R.id.leftButton :
-                this.finish();
-                break;
-
-            case R.id.rightButton :
-                this.finish();
-                break;
-
-            case R.id.Red :
-                mSetRed = true;
-                mPriorityRed.setEnabled(false);
-                mPriorityButton = true;
-                if(mEditTextFilled && mTimeSet && mDateSet)
-                {
-                    mLeftButton.setEnabled(true);
-                }
-                mPriorityYellow.setEnabled(true);
-                mPriorityGreen.setEnabled(true);
-                break;
-
-            case R.id.Yellow :
-                mSetYellow = true;
-                mPriorityYellow.setEnabled(false);
-                mPriorityButton = true;
-                if(mEditTextFilled && mDateSet && mTimeSet)
-                {
-                    mLeftButton.setEnabled(true);
-                }
-                mPriorityRed.setEnabled(true);
-                mPriorityGreen.setEnabled(true);
-                break;
-
-            case R.id.Green :
-                mSetGreen = true;
-                mPriorityGreen.setEnabled(false);
-                mPriorityButton = true;
-                if(mEditTextFilled && mDateSet && mTimeSet)
-                {
-                    mLeftButton.setEnabled(true);
-                }
-                mPriorityRed.setEnabled(true);
-                mPriorityYellow.setEnabled(true);
-                break;
-            case R.id.setDate :
-                mDatePicker.getDatePicker().setMinDate(Calendar.getInstance().getTimeInMillis());
-                mDatePicker.show();
-                break;
-
-            case R.id.setTime :
-                mTimePicker.show();
-                break;
+            mLeftButton.setText(getIntent().getStringExtra(getString(R.string.leftButtonText)));
+            mRightButton.setText(getIntent().getStringExtra(getString(R.string.rightButtonText)));
         }
+        else if(getIntent().getExtras().getInt(getString(R.string.typeOfTask)) == MainActivity.EDIT)
+        {
+            mLeftButton.setText(getIntent().getStringExtra(getString(R.string.leftButtonText)));
+            mRightButton.setText(getIntent().getStringExtra(getString(R.string.rightButtonText)));
+
+            mTask = mDatabaseHelper.readTask(String.valueOf(getIntent().getExtras()
+                    .getInt(getString(R.string.taskPosition))));
+            mTaskName.setText(mTask.getTaskName());
+            mTaskDescription.setText(mTask.getTaskDescription());
+            mSetDate.setText(mTask.getTaskDate());
+            mSetTime.setText(mTask.getTaskTime());
+            if(mTask.isTaskReminder() == 1)
+                mCheckBox.setChecked(true);
+            if(mTask.getTaskPriorityColor() == R.drawable.red)
+                mPriorityRed.performClick();
+            else if(mTask.getTaskPriorityColor() == R.drawable.yellow)
+                mPriorityYellow.performClick();
+            else if(mTask.getTaskPriorityColor() == R.drawable.green )
+                mPriorityGreen.performClick();
+            if(mTask.isTaskReminder() == 1)
+                mCheckBox.setChecked(true);
+            else
+                mCheckBox.setChecked(false);
+
+        }
+
+
+
+        mLeftButton.setOnClickListener(mOnClickListener);
+        mRightButton.setOnClickListener(mOnClickListener);
+        mSetDate.setOnClickListener(mOnClickListener);
+        mSetTime.setOnClickListener(mOnClickListener);
+        mPriorityRed.setOnClickListener(mOnClickListener);
+        mPriorityYellow.setOnClickListener(mOnClickListener);
+        mPriorityGreen.setOnClickListener(mOnClickListener);
     }
+
+
 
     private void checkFieldsForEmpty()
     {

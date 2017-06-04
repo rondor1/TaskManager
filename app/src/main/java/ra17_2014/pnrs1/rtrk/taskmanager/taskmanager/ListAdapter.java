@@ -2,6 +2,8 @@ package ra17_2014.pnrs1.rtrk.taskmanager.taskmanager;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +23,17 @@ public class ListAdapter extends BaseAdapter {
 
     private Context mContext;
     private ArrayList<Task> mTaskList;
+    private DatabaseHelper mDatabaseHelper;
 
     public ListAdapter(Context context)
     {
         mContext = context;
         mTaskList = new ArrayList<Task>();
+    }
+
+    public ArrayList<Task> getTaskList()
+    {
+        return mTaskList;
     }
 
     public void addTask(Task mTask)
@@ -39,6 +47,7 @@ public class ListAdapter extends BaseAdapter {
         mTaskList.remove(position);
         notifyDataSetChanged();
     }
+
 
     public void update(Task[] mTasks) {
         mTaskList.clear();
@@ -79,7 +88,7 @@ public class ListAdapter extends BaseAdapter {
         return mReturnValue;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent)
+    public View getView(final int position, View convertView, ViewGroup parent)
     {
         View mView = convertView;
         if(mView == null)
@@ -110,7 +119,6 @@ public class ListAdapter extends BaseAdapter {
                 if(isChecked)
                 {
                     mViewHolder.mName.setPaintFlags(mViewHolder.mName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    mTask.mTaskDone = 1;
                 }
                 else
                 {

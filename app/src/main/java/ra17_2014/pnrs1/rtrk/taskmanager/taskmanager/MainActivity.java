@@ -1,25 +1,39 @@
 package ra17_2014.pnrs1.rtrk.taskmanager.taskmanager;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, ServiceConnection{
 
 
     public static int ADD_TASK = 0;
     public static int EDIT_TASK = 1;
     public static int ADD = 2;
     public static int EDIT = 3;
+    public static int mPosition;
 
     private DatabaseHelper mDatabaseHelper;
     private ListAdapter mListAdapter;
+
+    public static ArrayList<Task> mTaskList;
+
+    /*Service stuff*/
+    private ServiceConnection mServiceConnection;
+    private NotificationAidlInterface mNotificationAidlInterface;
+    private Intent mServiceIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +45,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ListView mListView = (ListView) findViewById(R.id.listView);
         mListAdapter = new ListAdapter(MainActivity.this);
 
+        mTaskList = mListAdapter.getTaskList();
+
+        mServiceConnection = this;
+        mServiceIntent = new Intent(MainActivity.this, NotificationService.class);
+        bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
         mAddNewTask.setOnClickListener(this);
         mStatistics.setOnClickListener(this);
 
@@ -41,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent mTaskIntent = new Intent(MainActivity.this, CreateTask.class);
+
+                mPosition = position;
 
                 mTaskIntent.putExtra(getString(R.string.leftButtonText), getString(R.string.save));
                 mTaskIntent.putExtra(getString(R.string.rightButtonText), getString(R.string.delete));
@@ -62,6 +84,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mListAdapter.update(mTasks);
     }
 
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        if(mNotificationAidlInterface != null)
+        {
+            unbindService(this);
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId())
@@ -75,8 +108,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.viewStatistics :
-                Intent mViewStatics = new Intent(this, ViewStatistics.class);
-                startActivity(mViewStatics);
+                Intent mViewStaticsIntent = new Intent(this, ViewStatistics.class);
+                startActivity(mViewStaticsIntent);
                 break;
         }
     }
@@ -86,32 +119,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == ADD_TASK && resultCode == RESULT_OK)
         {
-                Bundle mBundle = data.getBundleExtra(getString(R.string.passedBundle));
-                Task mTask = (Task) mBundle.get(getString(R.string.passedTask));
-                mListAdapter.addTask(mTask);
-                mTask.setTaskID(mListAdapter.getCount());
-                Log.i("Robert", "Task id -> "+ String.valueOf(mTask.getTaskID()));
-                mDatabaseHelper.insert(mTask);
-                Task[] mTasks = mDatabaseHelper.readTasks();
-                mListAdapter.update(mTasks);
+            Bundle mBundle = data.getBundleExtra(getString(R.string.passedBundle));
+            Task mTask = (Task) mBundle.get(getString(R.string.passedTask));
+            mListAdapter.addTask(mTask);
+            mTask.setTaskID(mListAdapter.getCount());
+            mDatabaseHelper.insert(mTask);
+            Task[] mTasks = mDatabaseHelper.readTasks();
+            mListAdapter.update(mTasks);
+/*
+            try
+            {
+                mNotificationAidlInterface.notificationAdd();
+            }
+            catch (RemoteException e)
+            {
+                e.printStackTrace();
+            }*/
 
         }
         else if(requestCode == EDIT_TASK && RESULT_FIRST_USER == resultCode)
         {
-                Bundle mBundle = data.getBundleExtra(getString(R.string.passedBundle));
-                Task mTask = (Task) mBundle.get(getString(R.string.passedTask));
-                mDatabaseHelper.updateTask(mTask, String.valueOf(mTask.getTaskID()));
-                Task[] mTasks = mDatabaseHelper.readTasks();
-                mListAdapter.update(mTasks);
+            Bundle mBundle = data.getBundleExtra(getString(R.string.passedBundle));
+            Task mTask = (Task) mBundle.get(getString(R.string.passedTask));
+            mDatabaseHelper.updateTask(mTask, String.valueOf(mTask.getTaskID()));
+            Task[] mTasks = mDatabaseHelper.readTasks();
+            mListAdapter.update(mTasks);
+
+            /*try
+            {
+                mNotificationAidlInterface.notificationAdd();
+            }
+            catch (RemoteException e)
+            {
+                e.printStackTrace();
+            }*/
         }
         else if(requestCode == EDIT_TASK && resultCode == RESULT_CANCELED)
         {
             mDatabaseHelper.deleteTask(String.valueOf(data.getExtras().
                     getInt(getString(R.string.taskPosition))));
+            if(mListAdapter.getCount() > 1)
+            {
+                Task[] mTasks = mDatabaseHelper.readTasks();
+                for(Task mTask : mTasks)
+                {
+                    if(mTask.getTaskID() > mPosition)
+                    {
+                        mTask.setTaskID(mTask.getTaskID() -1);
+                        mDatabaseHelper.updateTask(mTask,String.valueOf(mTask.getTaskID()+1));
+                    }
+                }
+            }
             Task[] mTasks = mDatabaseHelper.readTasks();
             mListAdapter.update(mTasks);
+            /*try
+            {
+                mNotificationAidlInterface.notificationAdd();
+            }
+            catch (RemoteException e)
+            {
+                e.printStackTrace();
+            }*/
         }
     }
 
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        mNotificationAidlInterface = NotificationAidlInterface.Stub.asInterface(service);
+    }
 
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+
+    }
 }

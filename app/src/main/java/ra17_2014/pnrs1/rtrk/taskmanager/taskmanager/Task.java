@@ -88,7 +88,6 @@ public class Task  implements Serializable{
         return mTaskReminder;
     }
 
-
     public int isTaskDone()
     {
         return mTaskDone;

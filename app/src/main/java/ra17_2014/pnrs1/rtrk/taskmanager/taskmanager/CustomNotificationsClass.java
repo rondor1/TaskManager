@@ -23,7 +23,7 @@ public class CustomNotificationsClass extends NotificationAidlInterface.Stub {
     }
 
     @Override
-    public void notificationAdd() throws RemoteException {
+    public void notificationAdd()  {
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationBuilder = new Notification.Builder(mContext)
                 .setContentTitle("Task alert")

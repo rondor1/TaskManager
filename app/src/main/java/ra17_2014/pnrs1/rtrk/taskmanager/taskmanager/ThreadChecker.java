@@ -3,6 +3,8 @@ package ra17_2014.pnrs1.rtrk.taskmanager.taskmanager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.util.Log;
+
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -25,7 +27,7 @@ public class ThreadChecker extends Thread{
     {
         mRun = true;
         mContext = context;
-        mSimpleDateFormat = new SimpleDateFormat("hh:mm");
+        mSimpleDateFormat = new SimpleDateFormat("HH:mm");
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context
                 .NOTIFICATION_SERVICE);
         mNotificationBuilder = new Notification.Builder(mContext)
@@ -36,6 +38,7 @@ public class ThreadChecker extends Thread{
     @Override
     public synchronized void start() {
         mRun = true;
+        Log.i("Robert", "Thread started");
         super.start();
     }
 
@@ -49,6 +52,7 @@ public class ThreadChecker extends Thread{
         super.run();
         while(mRun)
         {
+            Log.i("Robert", "Thread running");
             String mMessage = "Task needs to be done in 15 minutes ";
             for(Task mTask : MainActivity.mTaskList)
             {

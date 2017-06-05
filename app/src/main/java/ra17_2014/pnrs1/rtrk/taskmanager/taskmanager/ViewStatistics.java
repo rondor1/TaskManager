@@ -15,6 +15,9 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
     private int mHighPriorityDone = 0;
     private int mMediumPriorityDone = 0;
     private int mLowPriorityDone = 0;
+    private float mHighPriorityPercentage = 0;
+    private float mMediumPriorityPercentage = 0;
+    private float mLowPriorityPercentage = 0;
 
 
     protected Button mBackButton;
@@ -38,9 +41,9 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
         mMediumPriorityPie = (PieChart) findViewById(R.id.mediumPie);
         mLowPriorityPie = (PieChart) findViewById(R.id.lowPie);
 
-        mHighPriorityPie.setPercentageTarget(66.f);
-        mMediumPriorityPie.setPercentageTarget(72.f);
-        mLowPriorityPie.setPercentageTarget(19.f);
+        mHighPriorityPie.setPercentageTarget(mHighPriorityPercentage*100);
+        mMediumPriorityPie.setPercentageTarget(mMediumPriorityPercentage*100);
+        mLowPriorityPie.setPercentageTarget(mLowPriorityPercentage*100);
 
         mMediumPriorityPie.getPaint().setColor(getResources().getColor(R.color.priorityMedium));
         mLowPriorityPie.getPaint().setColor(getResources().getColor(R.color.priorityLow));
@@ -81,13 +84,31 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
                         mLowPriorityDone++;
                     break;
             }
-            Log.i("Robert", "Red ->" + Integer.toString(mHighPriorityNum));
-            Log.i("Robert", "Red done->" + Integer.toString(mHighPriorityDone));
-            Log.i("Robert", "Yellow ->" + Integer.toString(mMediumPriorityNum));
-            Log.i("Robert", "Yellow done->" + Integer.toString(mMediumPriorityDone));
-            Log.i("Robert", "Green -> " + Integer.toBinaryString(mLowPriorityNum));
-            Log.i("Robert", "Green done->" + Integer.toString(mLowPriorityDone));
 
+            if(mHighPriorityDone == 0)
+            {
+                mHighPriorityPercentage = 0;
+            }
+            else
+            {
+                mHighPriorityPercentage = (float) mHighPriorityDone/mHighPriorityNum;
+            }
+            if(mMediumPriorityDone == 0)
+            {
+                mMediumPriorityPercentage = 0;
+            }
+            else
+            {
+                mMediumPriorityPercentage = (float) mMediumPriorityDone/mMediumPriorityNum ;
+            }
+            if(mLowPriorityDone== 0)
+            {
+                mLowPriorityPercentage = 0;
+            }
+            else
+            {
+                mLowPriorityPercentage = (float) mLowPriorityDone/mLowPriorityNum;
+            }
         }
     }
 }

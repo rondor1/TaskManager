@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static int EDIT = 3;
     public static int mPosition;
 
-    private DatabaseHelper mDatabaseHelper;
+    public static DatabaseHelper mDatabaseHelper;
     private ListAdapter mListAdapter;
 
     public static ArrayList<Task> mTaskList;
@@ -47,9 +47,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mTaskList = mListAdapter.getTaskList();
 
+        Log.i("Robert", "ServiceConnection");
         mServiceConnection = this;
+        Log.i("Robert", "ServiceConnection1");
         mServiceIntent = new Intent(MainActivity.this, NotificationService.class);
+        Log.i("Robert", "Starting service");
         bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        Log.i("Robert","Service started");
 
         mAddNewTask.setOnClickListener(this);
         mStatistics.setOnClickListener(this);
@@ -126,8 +130,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mDatabaseHelper.insert(mTask);
             Task[] mTasks = mDatabaseHelper.readTasks();
             mListAdapter.update(mTasks);
-/*
-            try
+            Log.i("Robert", "task back");
+
+            /*try
             {
                 mNotificationAidlInterface.notificationAdd();
             }

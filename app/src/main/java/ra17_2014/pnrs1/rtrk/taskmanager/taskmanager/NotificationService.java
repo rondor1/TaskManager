@@ -3,6 +3,7 @@ package ra17_2014.pnrs1.rtrk.taskmanager.taskmanager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 /**
  * Created by ASUS on 6/5/2017.
@@ -17,6 +18,7 @@ public class NotificationService extends Service {
     public void onCreate() {
         mThreadChecker = new ThreadChecker(this);
         mThreadChecker.start();
+        Log.i("Robert", "Started thread");
         mCustomNotificationsClass = new CustomNotificationsClass(this);
         super.onCreate();
     }

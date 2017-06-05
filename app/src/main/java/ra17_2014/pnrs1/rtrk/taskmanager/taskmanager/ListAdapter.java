@@ -119,10 +119,17 @@ public class ListAdapter extends BaseAdapter {
                 if(isChecked)
                 {
                     mViewHolder.mName.setPaintFlags(mViewHolder.mName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    Task mNewTask = MainActivity.mDatabaseHelper.readTask(String.valueOf(position+1));
+                    Log.i("Robert", "read");
+                    mNewTask.setTaskDone(1);
+                    MainActivity.mDatabaseHelper.updateTask(mNewTask, String.valueOf(position+1));
                 }
                 else
                 {
                     mViewHolder.mName.setPaintFlags(mViewHolder.mName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                    Task mNewTask = MainActivity.mDatabaseHelper.readTask(String.valueOf(position+1));
+                    mNewTask.setTaskDone(0);
+                    MainActivity.mDatabaseHelper.updateTask(mNewTask, String.valueOf(position+1));
                 }
             }
         });

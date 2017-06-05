@@ -8,13 +8,14 @@ import android.widget.Button;
 
 public class ViewStatistics extends AppCompatActivity implements View.OnClickListener {
 
+    private StatisticsNative mStatisticsNative;
 
-    private int mHighPriorityNum = 0;
-    private int mMediumPriorityNum = 0;
-    private int mLowPriorityNum = 0;
-    private int mHighPriorityDone = 0;
-    private int mMediumPriorityDone = 0;
-    private int mLowPriorityDone = 0;
+    private float mHighPriorityNum = 0;
+    private float mMediumPriorityNum = 0;
+    private float mLowPriorityNum = 0;
+    private float mHighPriorityDone = 0;
+    private float mMediumPriorityDone = 0;
+    private float mLowPriorityDone = 0;
     private float mHighPriorityPercentage = 0;
     private float mMediumPriorityPercentage = 0;
     private float mLowPriorityPercentage = 0;
@@ -91,7 +92,7 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                mHighPriorityPercentage = (float) mHighPriorityDone/mHighPriorityNum;
+                mHighPriorityPercentage =  mStatisticsNative.getStatistics(mHighPriorityDone, mHighPriorityNum);
             }
             if(mMediumPriorityDone == 0)
             {
@@ -99,7 +100,7 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                mMediumPriorityPercentage = (float) mMediumPriorityDone/mMediumPriorityNum ;
+                mMediumPriorityPercentage = mStatisticsNative.getStatistics(mMediumPriorityDone, mMediumPriorityNum) ;
             }
             if(mLowPriorityDone== 0)
             {
@@ -107,7 +108,7 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                mLowPriorityPercentage = (float) mLowPriorityDone/mLowPriorityNum;
+                mLowPriorityPercentage = mStatisticsNative.getStatistics(mLowPriorityDone, mLowPriorityNum);
             }
         }
     }

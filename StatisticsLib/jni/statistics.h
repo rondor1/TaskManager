@@ -9,10 +9,10 @@ extern "C" {
 #endif
 /*
  * Class:     ra17_2014_pnrs1_rtrk_taskmanager_taskmanager_StatisticsNative
- * Method:    getStatistics
+ * Method:    getStatisticsResult
  * Signature: (FF)F
  */
-JNIEXPORT jfloat JNICALL Java_ra17_12014_pnrs1_rtrk_taskmanager_taskmanager_StatisticsNative_getStatistics
+JNIEXPORT jfloat JNICALL Java_ra17_12014_pnrs1_rtrk_taskmanager_taskmanager_StatisticsNative_getStatisticsResult
   (JNIEnv *, jobject, jfloat, jfloat);
 
 #ifdef __cplusplus

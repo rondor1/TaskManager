@@ -33,6 +33,8 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_view_statistics);
 
 
+        mStatisticsNative = new StatisticsNative();
+
         mViewStatistics = this;
 
         calculateStatistics();
@@ -42,9 +44,9 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
         mMediumPriorityPie = (PieChart) findViewById(R.id.mediumPie);
         mLowPriorityPie = (PieChart) findViewById(R.id.lowPie);
 
-        mHighPriorityPie.setPercentageTarget(mHighPriorityPercentage*100);
-        mMediumPriorityPie.setPercentageTarget(mMediumPriorityPercentage*100);
-        mLowPriorityPie.setPercentageTarget(mLowPriorityPercentage*100);
+        mHighPriorityPie.setPercentageTarget(mHighPriorityPercentage);
+        mMediumPriorityPie.setPercentageTarget(mMediumPriorityPercentage);
+        mLowPriorityPie.setPercentageTarget(mLowPriorityPercentage);
 
         mMediumPriorityPie.getPaint().setColor(getResources().getColor(R.color.priorityMedium));
         mLowPriorityPie.getPaint().setColor(getResources().getColor(R.color.priorityLow));
@@ -92,7 +94,7 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                mHighPriorityPercentage =  mStatisticsNative.getStatistics(mHighPriorityDone, mHighPriorityNum);
+                mHighPriorityPercentage =  mStatisticsNative.getStatisticsResult(mHighPriorityDone, mHighPriorityNum);
             }
             if(mMediumPriorityDone == 0)
             {
@@ -100,7 +102,7 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                mMediumPriorityPercentage = mStatisticsNative.getStatistics(mMediumPriorityDone, mMediumPriorityNum) ;
+                mMediumPriorityPercentage = mStatisticsNative.getStatisticsResult(mMediumPriorityDone, mMediumPriorityNum) ;
             }
             if(mLowPriorityDone== 0)
             {
@@ -108,7 +110,7 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                mLowPriorityPercentage = mStatisticsNative.getStatistics(mLowPriorityDone, mLowPriorityNum);
+                mLowPriorityPercentage = mStatisticsNative.getStatisticsResult(mLowPriorityDone, mLowPriorityNum);
             }
         }
     }

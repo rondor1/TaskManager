@@ -15,7 +15,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, ServiceConnection{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
 
     public static int ADD_TASK = 0;
@@ -30,9 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static ArrayList<Task> mTaskList;
 
     /*Service stuff*/
-    private ServiceConnection mServiceConnection;
-    private NotificationAidlInterface mNotificationAidlInterface;
-    private Intent mServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +44,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mTaskList = mListAdapter.getTaskList();
 
-        Log.i("Robert", "ServiceConnection");
-        mServiceConnection = this;
-        Log.i("Robert", "ServiceConnection1");
-        mServiceIntent = new Intent(MainActivity.this, NotificationService.class);
-        Log.i("Robert", "Starting service");
-        bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        Log.i("Robert","Service started");
 
         mAddNewTask.setOnClickListener(this);
         mStatistics.setOnClickListener(this);
@@ -89,15 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        if(mNotificationAidlInterface != null)
-        {
-            unbindService(this);
-        }
-    }
+
 
     @Override
     public void onClick(View v) {
@@ -132,14 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mListAdapter.update(mTasks);
             Log.i("Robert", "task back");
 
-            /*try
-            {
-                mNotificationAidlInterface.notificationAdd();
-            }
-            catch (RemoteException e)
-            {
-                e.printStackTrace();
-            }*/
+
 
         }
         else if(requestCode == EDIT_TASK && RESULT_FIRST_USER == resultCode)
@@ -150,14 +125,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Task[] mTasks = mDatabaseHelper.readTasks();
             mListAdapter.update(mTasks);
 
-            /*try
-            {
-                mNotificationAidlInterface.notificationAdd();
-            }
-            catch (RemoteException e)
-            {
-                e.printStackTrace();
-            }*/
         }
         else if(requestCode == EDIT_TASK && resultCode == RESULT_CANCELED)
         {
@@ -177,24 +144,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             Task[] mTasks = mDatabaseHelper.readTasks();
             mListAdapter.update(mTasks);
-            /*try
-            {
-                mNotificationAidlInterface.notificationAdd();
-            }
-            catch (RemoteException e)
-            {
-                e.printStackTrace();
-            }*/
         }
     }
 
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        mNotificationAidlInterface = NotificationAidlInterface.Stub.asInterface(service);
-    }
 
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-
-    }
 }

@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := libstatistics
+LOCAL_MODULE := libStatisticsNative
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := statistics.c
 

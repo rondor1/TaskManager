@@ -391,8 +391,7 @@ public class CreateTask extends AppCompatActivity {
                     .getInt(getString(R.string.taskPosition))));
             mTaskName.setText(mTask.getTaskName());
             mTaskDescription.setText(mTask.getTaskDescription());
-            mSetDate.setText(mTask.getTaskDate());
-            mSetTime.setText(mTask.getTaskTime());
+            mPriorityButton = true;
             if(mTask.isTaskReminder() == 1)
                 mCheckBox.setChecked(true);
             if(mTask.getTaskPriorityColor() == R.drawable.red)

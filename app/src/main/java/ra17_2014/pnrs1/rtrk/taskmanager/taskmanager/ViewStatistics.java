@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import java.lang.Math;
 
 public class ViewStatistics extends AppCompatActivity implements View.OnClickListener {
 
@@ -44,9 +45,9 @@ public class ViewStatistics extends AppCompatActivity implements View.OnClickLis
         mMediumPriorityPie = (PieChart) findViewById(R.id.mediumPie);
         mLowPriorityPie = (PieChart) findViewById(R.id.lowPie);
 
-        mHighPriorityPie.setPercentageTarget(mHighPriorityPercentage);
-        mMediumPriorityPie.setPercentageTarget(mMediumPriorityPercentage);
-        mLowPriorityPie.setPercentageTarget(mLowPriorityPercentage);
+        mHighPriorityPie.setPercentageTarget(Math.round(mHighPriorityPercentage));
+        mMediumPriorityPie.setPercentageTarget(Math.round(mMediumPriorityPercentage));
+        mLowPriorityPie.setPercentageTarget(Math.round(mLowPriorityPercentage));
 
         mMediumPriorityPie.getPaint().setColor(getResources().getColor(R.color.priorityMedium));
         mLowPriorityPie.getPaint().setColor(getResources().getColor(R.color.priorityLow));
